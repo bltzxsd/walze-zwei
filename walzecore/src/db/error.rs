@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use std::result;
+use std::{io, result};
 
 pub type Result<T> = result::Result<T, Error>;
 
@@ -14,4 +14,6 @@ pub enum Error {
     NamespaceNotFound(String),
     #[error("{0}")]
     Simple(&'static str),
+    #[error("{0}")]
+    Io(#[from] io::Error),
 }

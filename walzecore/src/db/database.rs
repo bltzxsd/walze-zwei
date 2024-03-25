@@ -1,9 +1,7 @@
-use std::collections::HashMap;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::convert;
 
-use serde::Deserialize;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::db;
 use crate::db::Result;
@@ -16,12 +14,11 @@ use crate::db::Result;
 /// # Examples
 ///
 /// ```
-///
 /// use walzecore::db::database::User;
 ///
 /// let mut user = User::new();
 /// user.add_namespace("char1"); // create namespace
-/// user.namespace_mut("char1"); // switch to the "game-rules" namespace
+/// user.namespace_mut("char1"); // switch to the "char1" namespace
 /// user.alias_mut("$adv", "2d20"); // set alias for stealth in the current namespace
 /// assert_eq!(user.alias("$adv").unwrap(), "2d20".to_string());
 /// ```
@@ -38,7 +35,6 @@ impl Default for User {
     }
 }
 
-#[allow(unused)]
 impl User {
     /// Creates a new `User` instance with a default namespace.
     ///
@@ -174,9 +170,9 @@ impl User {
     /// use walzecore::db::database::User;
     ///
     /// let mut user = User::new();
-    /// user.add_namespace("game-rules");
-    /// user.namespace_mut("game-rules"); // switch to alias
-    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6").unwrap(); // add $stealth to game-rules
+    /// user.add_namespace("LMoP"); // create namespace: LMoP
+    /// user.namespace_mut("LMoP"); // switch to LMoP namespace
+    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6").unwrap(); // add $stealth to LMoP
     /// let stealth_roll = user.alias("$stealth").unwrap();
     /// assert_eq!(stealth_roll, "2d6 t4 tt4, 1d6".to_string());
     /// ```
@@ -185,12 +181,29 @@ impl User {
         match self
             .alias
             .get(&self.namespace)
-            .expect("invalid namespace")
+            .ok_or_else(|| db::Error::InvalidNamespace(self.namespace.clone()))?
             .get(&alias)
         {
             Some(v) => Ok(v.to_owned()),
             None => Err(db::Error::AliasNotFound(alias)),
         }
+    }
+
+    /// Returns a list of all aliases in the current namespace
+    ///
+    /// # Errors
+    ///
+    /// If the namespace does not exist, an error is returned.
+    pub fn aliases(&self) -> Result<Vec<(&str, &str)>> {
+        let aliases = self
+            .alias
+            .get(self.namespace())
+            .ok_or_else(|| db::Error::InvalidNamespace(self.namespace.clone()))?;
+
+        Ok(aliases
+            .iter()
+            .map(|(k, v)| (k.as_str(), v.as_str()))
+            .collect())
     }
 
     /// Removes an alias from the current namespace.
@@ -213,13 +226,14 @@ impl User {
     /// ```
     pub fn remove_alias<T: Into<String>>(&mut self, alias: T) -> Result<String> {
         let alias = alias.into();
-        let Some(alias_set) = self.alias.get_mut(&self.namespace) else {
-            return Err(db::Error::NamespaceNotFound(self.namespace.clone()));
-        };
+        let alias_set = self
+            .alias
+            .get_mut(&self.namespace)
+            .ok_or_else(|| db::Error::NamespaceNotFound(self.namespace.clone()))?;
 
         alias_set
             .remove(&alias)
-            .ok_or(db::Error::Simple("could not remove alias"))
+            .ok_or_else(|| db::Error::AliasNotFound(alias))
     }
 
     /// Removes a namespace and returns its associated aliases.
@@ -250,11 +264,13 @@ impl User {
         } else {
             return Err(db::Error::NamespaceNotFound(ns));
         }
+
         if self.namespace == ns {
             self.namespace = "default".to_string();
         }
+
         self.alias
             .remove_entry(&ns)
-            .ok_or(db::Error::Simple("could not remove namespace"))
+            .ok_or_else(|| db::Error::NamespaceNotFound(ns))
     }
 }
