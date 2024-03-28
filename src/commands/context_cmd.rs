@@ -1,5 +1,4 @@
-use crate::Context;
-use crate::Result;
+use crate::{Context, Result};
 
 use poise::serenity_prelude as serenity;
 
