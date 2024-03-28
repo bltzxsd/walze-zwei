@@ -130,7 +130,7 @@ async fn on_error(err: poise::FrameworkError<'_, Data, crate::error::Error>) {
     }
 }
 
-// Load the users data from the JSON file
+// Load the users data from JSON file
 async fn load_users_from_file() -> Result<Users<serenity::UserId>> {
     let mut file = OpenOptions::new()
         .create(true)
@@ -142,11 +142,10 @@ async fn load_users_from_file() -> Result<Users<serenity::UserId>> {
     let mut json = String::new();
     file.read_to_string(&mut json).await?;
 
-    // If the file is empty, initialize with an empty JSON object
     if json.is_empty() {
-        json += "{}";
+        json.push_str("{}");
     }
 
-    let users: Users<serenity::UserId> = Users::new(&json)?;
+    let users = Users::new(&json)?;
     Ok(users)
 }
