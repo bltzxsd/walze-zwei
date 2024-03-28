@@ -18,19 +18,15 @@ pub async fn eval(
     #[description = "Show the dice roll in chat"] show: Option<bool>,
 ) -> Result<()> {
     let data = ctx.data();
-    let author = ctx.author().id;
 
     let mut user = data.lock().await;
-    let aliases = user
-        .entry(author)
-        .or_insert_with(database::User::default)
-        .aliases()?;
+    let aliases = user.get_or_create(ctx.author().id).aliases()?;
 
     let resolved_expr = aliases
         .iter()
         .fold(expr, |acc, (alias, value)| acc.replace(alias, value));
 
-    let die = split_dice_string(&resolved_expr);
+    let die = utils::split_dice(&resolved_expr);
     let mut embeds = Vec::with_capacity(die.len());
 
     for roll in die {
@@ -39,7 +35,7 @@ pub async fn eval(
             .roll()
             .map_err(|e| format!("error while parsing input: {roll}\n```\n{e}\n```"))?;
 
-        let result = normalize_dice_expr(result.to_string().as_ref());
+        let result = utils::normalize_dice_expr(result.to_string().as_ref());
         embeds.push(embed!(ctx, roll, result, EmbedColor::Ok));
     }
 
