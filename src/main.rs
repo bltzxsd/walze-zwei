@@ -32,7 +32,7 @@ use crate::{
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt()
-        .pretty()
+        .compact()
         .with_ansi(true)
         .with_max_level(tracing::Level::INFO)
         .init();
