@@ -1,14 +1,12 @@
-use crate::utils::macros::discord::embed;
-use crate::utils::macros::discord::reply;
-
-use crate::utils::macros::EmbedColor;
-use crate::Context;
-use crate::Result;
+use crate::{
+    utils::{
+        self,
+        macros::{discord::embed, EmbedColor},
+    },
+    Context, Result,
+};
 
 use caith::Roller;
-
-use poise::serenity_prelude::CreateEmbedFooter;
-use walzecore::db::database;
 
 /// evaluate a dice string and return the result
 #[poise::command(slash_command)]
