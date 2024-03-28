@@ -37,16 +37,15 @@ async fn main() {
         .with_max_level(tracing::Level::INFO)
         .init();
 
-    if let Err(e) = setup_client().await {
+    if let Err(e) = run().await {
         error!("{:#?}", e);
     }
 }
 
-async fn setup_client() -> Result<()> {
-    dotenv().expect("no .env file found");
-
     // Load the existing users data from the JSON file
     let users: Users<serenity::UserId> = load_users_from_file().await?;
+async fn run() -> Result<()> {
+    dotenv().ok();
 
     // Create a new Inner struct with the loaded users data
     let db = Arc::new(Mutex::new(Inner::new(users)));
