@@ -49,15 +49,11 @@ impl Deref for Inner {
     }
 }
 
-impl DerefMut for Inner {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
+/// Type alias for `poise::Context` with the `Data` struct as the data type and `Error` as the error type.
 pub type Context<'a> = poise::Context<'a, Data, Error>;
 
 impl Drop for Inner {
+    /// When the `Data` instance is dropped, we want to write whatever is written into the `users.json` file. 
     fn drop(&mut self) {
         // Write the updated users data to the JSON file before dropping
         let string = self.0.to_json();
