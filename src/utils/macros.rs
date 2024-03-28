@@ -1,5 +1,3 @@
-#![allow(unused_macros)]
-
 #[rustfmt::skip]
 pub enum EmbedColor {
     Error   = 0x00FF_3333,
