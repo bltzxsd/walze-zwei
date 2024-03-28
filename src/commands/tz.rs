@@ -1,20 +1,16 @@
-use crate::utils::macros::discord::embed;
-use crate::utils::macros::discord::embed_error;
-
-use crate::utils::macros::discord::reply_error;
-use crate::utils::macros::EmbedColor;
-use crate::Context;
-use crate::Result;
+use crate::{
+    utils::macros::{
+        discord::{embed, embed_error, reply_error},
+        EmbedColor,
+    },
+    Context, Result,
+};
 
 use chrono::offset::TimeZone;
 
 use chrono::TimeDelta;
-use futures_util::future;
-use futures_util::stream;
-use futures_util::Stream;
-use futures_util::StreamExt;
-use poise::serenity_prelude::CreateActionRow;
-use poise::serenity_prelude::CreateButton;
+use futures_util::{future, stream, Stream, StreamExt};
+use poise::serenity_prelude::{CreateActionRow, CreateButton};
 
 use walzecore::tz;
 
