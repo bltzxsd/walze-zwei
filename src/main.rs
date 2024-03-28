@@ -91,8 +91,8 @@ async fn run() -> Result<()> {
         .setup(|ctx, _, framework| {
             Box::pin(async move {
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                info!("commands registered globally");
                 Ok(Data::new(db.clone()))
+                debug!("commands registered globally");
             })
         })
         .build();
