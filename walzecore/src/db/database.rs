@@ -20,7 +20,8 @@ use crate::db::Result;
 /// user.add_namespace("char1"); // create namespace
 /// user.namespace_mut("char1"); // switch to the "char1" namespace
 /// user.alias_mut("$adv", "2d20"); // set alias for stealth in the current namespace
-/// assert_eq!(user.alias("$adv").unwrap(), "2d20".to_string());
+/// assert_eq!(user.alias("$adv")?, "2d20".to_string());
+/// # Ok::<(), self::walzecore::db::Error>(())
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct User {
