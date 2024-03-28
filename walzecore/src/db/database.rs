@@ -113,7 +113,7 @@ impl User {
     /// ```
     pub fn namespace_mut<T: Into<String>>(&mut self, namespace: T) {
         let namespace = namespace.into();
-        if self.available_namespaces.contains(&namespace) {
+        if self.alias.contains_key(&namespace) {
             self.namespace = namespace;
         }
     }
