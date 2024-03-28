@@ -147,7 +147,8 @@ impl User {
     /// let mut user = User::new();
     /// assert_eq!(user.namespace(), "default");
     /// user.alias_mut("test", "new");
-    /// assert_eq!(user.alias("test").unwrap(), "new");
+    /// assert_eq!(user.alias("test")?, "new");
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn alias_mut<'a, T>(&mut self, k: T, v: T) -> Result<()>
     where
@@ -173,9 +174,10 @@ impl User {
     /// let mut user = User::new();
     /// user.add_namespace("LMoP"); // create namespace: LMoP
     /// user.namespace_mut("LMoP"); // switch to LMoP namespace
-    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6").unwrap(); // add $stealth to LMoP
-    /// let stealth_roll = user.alias("$stealth").unwrap();
+    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6")?; // add $stealth to LMoP
+    /// let stealth_roll = user.alias("$stealth")?;
     /// assert_eq!(stealth_roll, "2d6 t4 tt4, 1d6".to_string());
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn alias<'a, T: Into<String> + convert::From<&'a str>>(&self, alias: T) -> Result<String> {
         let alias = alias.into();
@@ -221,9 +223,10 @@ impl User {
     /// let mut user = User::new();
     /// user.add_namespace("game-rules");
     /// user.namespace_mut("game-rules");
-    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6").unwrap();
-    /// let removed_alias = user.remove_alias("$stealth").unwrap();
+    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6")?;
+    /// let removed_alias = user.remove_alias("$stealth")?;
     /// assert_eq!(removed_alias, "2d6 t4 tt4, 1d6");
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn remove_alias<T: Into<String>>(&mut self, alias: T) -> Result<String> {
         let alias = alias.into();
@@ -250,10 +253,11 @@ impl User {
     /// let mut user = User::new();
     /// user.add_namespace("game-rules");
     /// user.namespace_mut("game-rules");
-    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6").unwrap();
-    /// let (namespace, aliases) = user.remove_namespace("game-rules").unwrap();
+    /// user.alias_mut("$stealth", "2d6 t4 tt4, 1d6")?;
+    /// let (namespace, aliases) = user.remove_namespace("game-rules")?;
     /// assert_eq!(namespace, "game-rules");
     /// assert_eq!(aliases.get("$stealth"), Some(&"2d6 t4 tt4, 1d6".to_string()));
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn remove_namespace<T: Into<String>>(
         &mut self,
