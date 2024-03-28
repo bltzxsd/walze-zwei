@@ -65,6 +65,25 @@ async fn setup_client() -> Result<()> {
     let options = poise::FrameworkOptions {
         commands,
         on_error: |err| Box::pin(on_error(err)),
+        pre_command: |ctx| {
+            Box::pin(async move {
+                info!("Executing command {}...", ctx.command().qualified_name);
+            })
+        },
+        post_command: |ctx| {
+            Box::pin(async move {
+                info!("Executed command {}", ctx.command().qualified_name);
+            })
+        },
+        event_handler: |_ctx, event, _framework, _data| {
+            Box::pin(async move {
+                debug!(
+                    "Got an event in event handler: {:?}",
+                    event.snake_case_name(),
+                );
+                Ok(())
+            })
+        },
         ..Default::default()
     };
 
