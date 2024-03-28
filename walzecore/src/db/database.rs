@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::convert;
 
 use serde::{Deserialize, Serialize};
@@ -26,7 +26,6 @@ use crate::db::Result;
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct User {
     namespace: String,
-    available_namespaces: HashSet<String>,
     alias: HashMap<String, HashMap<String, String>>,
 }
 
@@ -48,19 +47,13 @@ impl User {
     ///
     /// let user = User::new();
     /// assert_eq!(user.namespace(), "default");
-    /// assert!(user.available_namespaces().contains("default"));
+    /// assert!(user.namespaces().iter().any(|ns| ns == "default"));
     /// ```
     pub fn new() -> Self {
         let namespace = "default".to_string();
-        let mut available_namespaces = HashSet::new();
-        available_namespaces.insert(namespace.clone());
         let mut alias = HashMap::new();
         alias.insert(namespace.clone(), HashMap::new());
-        Self {
-            namespace,
-            available_namespaces,
-            alias,
-        }
+        Self { namespace, alias }
     }
 
     /// Adds a new namespace to the user.
@@ -73,12 +66,11 @@ impl User {
     /// use walzecore::db::database::User;
     ///
     /// let mut user = User::new();
-    /// user.add_namespace("character-sheets");
-    /// assert!(user.available_namespaces().contains("character-sheets"));
+    /// user.add_namespace("character-sheet1");
+    /// assert!(user.namespaces().iter().any(|sheet| sheet == "character-sheet1"))
     /// ```
     pub fn add_namespace<T: Into<String>>(&mut self, name: T) {
         let k = name.into();
-        self.available_namespaces.insert(k.clone());
         self.alias.insert(k, HashMap::new());
     }
 
@@ -125,12 +117,14 @@ impl User {
     /// ```
     /// use walzecore::db::database::User;
     ///
-    /// let user = User::new();
-    /// let ns: Vec<_> = user.available_namespaces().into_iter().collect();
-    /// assert_eq!(ns, vec!["default".to_string()]);
+    /// let mut user = User::new();
+    /// user.add_namespace("test");
+    ///
+    /// let ns = user.namespaces();
+    /// assert_eq!(ns, vec![String::from("test"), "default".into()]);
     /// ```
-    pub fn available_namespaces(&self) -> HashSet<String> {
-        self.available_namespaces.clone()
+    pub fn namespaces(&self) -> Vec<String> {
+        self.alias.clone().into_keys().collect()
     }
 
     /// Adds or updates an alias in the current namespace.
@@ -264,11 +258,6 @@ impl User {
         namespace: T,
     ) -> Result<(String, HashMap<String, String>)> {
         let ns: String = namespace.into();
-        if self.available_namespaces.contains(&ns) {
-            self.available_namespaces.remove(&ns);
-        } else {
-            return Err(db::Error::NamespaceNotFound(ns));
-        }
 
         if self.namespace == ns {
             self.namespace = "default".to_string();
