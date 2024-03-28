@@ -17,11 +17,9 @@ use commands::eval;
 use commands::tz;
 use dotenvy::dotenv;
 use poise::serenity_prelude as serenity;
-use tokio::fs::OpenOptions;
-use tokio::io::AsyncReadExt;
 use tokio::sync::Mutex;
-use tracing::error;
-use tracing::info;
+use tokio::{fs::OpenOptions, io::AsyncReadExt};
+use tracing::{debug, error, info};
 use walzecore::db::Users;
 
 use models::{Context, Data, Inner};
