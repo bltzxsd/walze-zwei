@@ -8,6 +8,7 @@ use walzecore::db::Users;
 
 use crate::error::Error;
 
+/// `Data` struct holds the users's dice rolls, which is an `Arc<Mutex<Users<serenity::UserId>>>`.
 #[derive(Debug)]
 pub struct Data {
     data: Arc<Mutex<Inner>>,
