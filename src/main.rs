@@ -55,7 +55,8 @@ async fn setup_client() -> Result<()> {
     let intents = serenity::GatewayIntents::non_privileged();
     let commands = vec![
         eval::eval(),
-        eval::alias(),
+        alias::alias(),
+        alias::namespace(),
         context_cmd::help(),
         context_cmd::echo(),
         tz::tzcalc(),
