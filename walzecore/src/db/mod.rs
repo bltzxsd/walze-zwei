@@ -45,7 +45,8 @@ impl<T: Hash + Eq + Serialize + DeserializeOwned> Users<T> {
     /// ```
     /// use walzecore::db::Users;
     ///
-    /// let users = Users::<u64>::new("{}").unwrap();
+    /// let users = Users::<u64>::new("{}")?;
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn new(json: &str) -> Result<Users<T>> {
         let users = serde_json::from_str(json).unwrap_or_default();
@@ -62,9 +63,10 @@ impl<T: Hash + Eq + Serialize + DeserializeOwned> Users<T> {
     /// use walzecore::db::Users;
     /// use walzecore::db::User;
     ///
-    /// let mut users = Users::<u64>::new("{}").unwrap();
+    /// let mut users = Users::<u64>::new("{}")?;
     /// let user = User::new();
     /// users.add_user(1, user);
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn add_user(&mut self, id: T, user: User) {
         self.insert(id, user);
@@ -77,11 +79,29 @@ impl<T: Hash + Eq + Serialize + DeserializeOwned> Users<T> {
     /// ```
     /// use walzecore::db::Users;
     ///
-    /// let users = Users::<u64>::new("{}").unwrap();
+    /// let users = Users::<u64>::new("{}")?;
     /// let json = users.to_json();
+    /// # Ok::<(), self::walzecore::db::Error>(())
     /// ```
     pub fn to_json(&self) -> String {
         serde_json::to_string(&self.users).unwrap_or_else(|_| "{}".to_string())
+    }
+
+    /// Get a `User` instance for the given `user_id`, creating a new default instance if it doesn't exist.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use walzecore::db::Users;
+    /// use walzecore::db::User;
+    ///
+    /// let mut users = Users::<u64>::new("{}")?;
+    /// let user = users.get_or_create(1);
+    /// assert_eq!(user, &mut User::default());
+    /// # Ok::<(), self::walzecore::db::Error>(())
+    /// ```
+    pub fn get_or_create(&mut self, user_id: T) -> &mut User {
+        self.entry(user_id).or_default()
     }
 }
 
