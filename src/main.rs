@@ -23,7 +23,11 @@ use tracing::{debug, error, info};
 use walzecore::db::Users;
 
 use models::{Context, Data, Inner};
-use crate::{commands::alias, error::Result, utils::macros::discord::reply_error};
+use crate::{
+    commands::alias,
+    error::Result,
+    utils::macros::discord::reply_error,
+};
 
 #[tokio::main]
 async fn main() {
