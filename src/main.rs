@@ -25,9 +25,8 @@ use tracing::error;
 use tracing::info;
 use walzecore::db::Users;
 
-use crate::error::Result;
-use crate::utils::macros::discord::reply_error;
 use models::{Context, Data, Inner};
+use crate::{commands::alias, error::Result, utils::macros::discord::reply_error};
 
 #[tokio::main]
 async fn main() {
