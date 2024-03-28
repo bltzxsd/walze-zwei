@@ -10,22 +10,19 @@ mod error;
 mod models;
 mod utils;
 
-use std::sync::Arc;
-
 use commands::context_cmd;
 use commands::eval;
 use commands::tz;
 use dotenvy::dotenv;
 use poise::serenity_prelude as serenity;
-use tokio::sync::Mutex;
 use tokio::{fs::OpenOptions, io::AsyncReadExt};
 use tracing::{debug, error, info};
 use walzecore::db::Users;
 
-use models::{Context, Data, Inner};
 use crate::{
     commands::alias,
     error::Result,
+    models::{Context, Data},
     utils::macros::discord::reply_error,
 };
 
@@ -42,16 +39,15 @@ async fn main() {
     }
 }
 
-    // Load the existing users data from the JSON file
-    let users: Users<serenity::UserId> = load_users_from_file().await?;
 async fn run() -> Result<()> {
     dotenv().ok();
 
-    // Create a new Inner struct with the loaded users data
-    let db = Arc::new(Mutex::new(Inner::new(users)));
+    let users = load_users_from_file().await?;
+    let data = Data::new(users);
 
     let token = std::env::var("DISCORD_API")?;
     let intents = serenity::GatewayIntents::non_privileged();
+
     let commands = vec![
         eval::eval(),
         alias::alias(),
@@ -91,8 +87,8 @@ async fn run() -> Result<()> {
         .setup(|ctx, _, framework| {
             Box::pin(async move {
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data::new(db.clone()))
                 debug!("commands registered globally");
+                Ok(data)
             })
         })
         .build();
