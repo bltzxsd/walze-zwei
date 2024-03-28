@@ -103,9 +103,9 @@ async fn on_error(err: poise::FrameworkError<'_, Data, crate::error::Error>) {
     match err {
         Setup { error, .. } => panic!("failed to start bot: {error:#?}"),
         Command { error, ctx, .. } => {
-            let reply = reply_error!(ctx, "unexpected error", error.to_string());
+            let reply = reply_error!(ctx, "Error", error.to_string());
             if let Err(e) = ctx.send(reply).await {
-                panic!("error dispatching error response: {e:#?}");
+                panic!("failed to dispatch error response: {e:#?}");
             }
         }
         _ => {}
