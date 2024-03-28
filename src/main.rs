@@ -16,7 +16,6 @@ use commands::context_cmd;
 use commands::eval;
 use commands::tz;
 use dotenvy::dotenv;
-
 use poise::serenity_prelude as serenity;
 use tokio::fs::OpenOptions;
 use tokio::io::AsyncReadExt;
