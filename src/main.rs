@@ -15,6 +15,7 @@ use commands::eval;
 use commands::tz;
 use dotenvy::dotenv;
 use poise::serenity_prelude as serenity;
+use serenity::UserId;
 use tokio::{fs::OpenOptions, io::AsyncReadExt};
 use tracing::{debug, error, info};
 use walzecore::db::Users;
@@ -127,7 +128,7 @@ async fn on_error(err: poise::FrameworkError<'_, Data, crate::error::Error>) {
 }
 
 // Load the users data from JSON file
-async fn load_users_from_file() -> Result<Users<serenity::UserId>> {
+async fn load_users_from_file() -> Result<Users<UserId>> {
     let mut file = OpenOptions::new()
         .create(true)
         .read(true)
