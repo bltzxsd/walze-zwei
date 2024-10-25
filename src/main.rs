@@ -131,6 +131,7 @@ async fn on_error(err: poise::FrameworkError<'_, Data, crate::error::Error>) {
 async fn load_users_from_file() -> Result<Users<UserId>> {
     let mut file = OpenOptions::new()
         .create(true)
+        .truncate(false)
         .read(true)
         .write(true)
         .open("users.json")
