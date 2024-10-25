@@ -30,20 +30,16 @@ pub(crate) mod discord {
                 .static_avatar_url()
                 .unwrap_or_else(String::new);
 
-            #[allow(unused_mut)] // TODO: look for a way to remove this allow.
-            let mut embed = poise::serenity_prelude::CreateEmbed::new()
+            poise::serenity_prelude::CreateEmbed::new()
                 .author(
                     poise::serenity_prelude::CreateEmbedAuthor::new(author_name).icon_url(icon_url),
                 )
                 .description($desc)
                 .title($title)
-                .color($color);
-
+                .color($color)
             $(
-                embed = embed.field($field_title, $field_desc, false);
+                .field($field_title, $field_desc, false)
             )*
-
-            embed
         }}
     }
 
