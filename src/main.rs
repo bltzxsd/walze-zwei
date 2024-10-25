@@ -120,7 +120,7 @@ async fn on_error(err: poise::FrameworkError<'_, Data, crate::error::Error>) {
         Command { error, ctx, .. } => {
             let reply = reply_error!(ctx, "Error", error.to_string());
             if let Err(e) = ctx.send(reply).await {
-                panic!("failed to dispatch error response: {e:#?}");
+                error!("failed to dispatch error response: {e:#?}");
             }
         }
         _ => {}
