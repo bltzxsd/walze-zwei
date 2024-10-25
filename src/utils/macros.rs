@@ -25,7 +25,7 @@ pub(crate) mod discord {
                 None => $ctx.author().name.clone(),
             };
 
-            let author_icon_url = $ctx
+            let icon_url = $ctx
                 .author()
                 .static_avatar_url()
                 .unwrap_or_else(String::new);
@@ -33,7 +33,7 @@ pub(crate) mod discord {
             #[allow(unused_mut)] // TODO: look for a way to remove this allow.
             let mut embed = poise::serenity_prelude::CreateEmbed::new()
                 .author(
-                    poise::serenity_prelude::CreateEmbedAuthor::new(author_name).icon_url(author_icon_url),
+                    poise::serenity_prelude::CreateEmbedAuthor::new(author_name).icon_url(icon_url),
                 )
                 .description($desc)
                 .title($title)
