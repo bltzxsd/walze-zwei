@@ -50,7 +50,7 @@ impl User {
     /// assert!(user.namespaces().iter().any(|ns| ns == "default"));
     /// ```
     pub fn new() -> Self {
-        let namespace = "default".to_string();
+        let namespace = String::from("default");
         let mut alias = HashMap::new();
         alias.insert(namespace.clone(), HashMap::new());
         Self { namespace, alias }
@@ -260,7 +260,7 @@ impl User {
         let ns: String = namespace.into();
 
         if self.namespace == ns {
-            self.namespace = "default".to_string();
+            self.namespace = String::from("default");
         }
 
         self.alias
